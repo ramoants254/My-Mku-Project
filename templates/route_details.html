@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Route: {{ route.start_point }} to {{ route.end_point }}</h2>
+    <p class="text-center">Select a bus to view available seats or proceed with booking.</p>
+    <div class="row">
+        {% for bus in buses %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Bus {{ bus.id }}</h5>
+                        <p class="card-text">Capacity: {{ bus.capacity }}</p>
+                        <p class="card-text">Departure Date: {{ bus.date|date:"D, M j, Y" }}</p>
+                        <p class="card-text">Departure Time: {{ bus.departure_time|time:"h:i A" }}</p>
+                        <!-- Optional: Add more bus details here -->
+                        <a href="{% url 'bus_booking' bus.id %}" class="btn btn-primary">Book This Bus</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

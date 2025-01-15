@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Welcome Message -->
+    <h2 class="text-center">Welcome, {{ user.username }}</h2>
+    <p class="text-center">Select a route to view buses and book a seat, or view your bookings below.</p>
+
+    <!-- User Bookings Section -->
+    <div class="mt-5">
+        <h3>Your Bookings</h3>
+        {% if user.bookings.all %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Route</th>
+                        <th>Bus</th>
+                        <th>Seat</th>
+                        <th>Time Slot</th>
+                        <th>Date</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in user.bookings.all %}
+                        <tr>
+                            <td>{{ booking.id }}</td>
+                            <td>{{ booking.seat.bus.route.start_point }} to {{ booking.seat.bus.route.end_point }}</td>
+                            <td>Bus {{ booking.seat.bus.id }}</td>
+                            <td>{{ booking.seat.seat_number }}</td>
+                            <td>{{ booking.time_slot }}</td>
+                            <td>{{ booking.date }}</td>
+                            <td>
+                                <a href="{% url 'view_booking' booking.id %}" class="btn btn-info btn-sm">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-center">You have no bookings yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Route Selection Section -->
+    <div class="mt-5">
+        <h3>Available Routes</h3>
+        <div class="row">
+            {% for route in routes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ route.start_point }} to {{ route.end_point }}</h5>
+                            <p class="card-text">Fare: KES {{ route.fare }}</p>
+                            <a href="{% url 'route_details' route.id %}" class="btn btn-primary">View Buses</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Header Section -->
+    <div class="text-center">
+        <h2 class="mb-4 text-primary">We Value Your Feedback!</h2>
+        <p class="text-muted">Let us know your thoughts to help us improve.</p>
+    </div>
+
+    <!-- Feedback Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-sm border-0 mb-5">
+                <div class="card-body">
+                    <h4 class="card-title mb-3 text-secondary text-center">Submit Your Feedback</h4>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="message" class="form-label">Your Feedback</label>
+                            <textarea id="message" name="message" class="form-control" rows="4" 
+                                placeholder="Write your feedback here..." required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="rating" class="form-label">Rating (1 to 5 Stars)</label>
+                            <select id="rating" name="rating" class="form-select" required>
+                                <option value="" selected disabled>Select a rating</option>
+                                {% for i in "12345" %}
+                                <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary w-100">Submit Feedback</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Feedback Section -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h4 class="card-title mb-3 text-secondary">Your Previous Feedback</h4>
+            <ul class="list-group list-group-flush">
+                {% for feedback in user_feedback %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1"><strong>{{ feedback.created_at|date:"F j, Y, g:i a" }}</strong></p>
+                        <p class="mb-0 text-secondary">{{ feedback.message }}</p>
+                    </div>
+                    <span class="badge bg-warning text-dark rounded-pill">
+                        {{ feedback.rating }} <i class="bi bi-star-fill"></i>
+                    </span>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-center text-muted">
+                    You have not submitted any feedback yet.
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

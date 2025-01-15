@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Status{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body text-center">
+            <h3 class="card-title mb-4">Payment Processing</h3>
+            
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            
+            <p class="lead">Please complete the payment on your phone...</p>
+            <p class="text-muted">Waiting for M-Pesa confirmation</p>
+            
+            <div class="mt-4">
+                <p class="mb-2">Booking Details:</p>
+                <p class="mb-1">Amount: KES {{ booking_data.amount }}</p>
+                <p class="mb-1">Phone: {{ booking_data.phone_number }}</p>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel and Return to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto refresh the page -->
+<meta http-equiv="refresh" content="{{ refresh_interval }}">
+{% endblock %} 

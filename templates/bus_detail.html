@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Bus {{ bus.id }} Seats</h2>
+    <p class="text-center">Click on an available seat to book.</p>
+    <div class="row">
+        {% for seat in seats %}
+            <div class="col-md-2 mb-4">
+                <button id="seat-{{ seat.id }}" 
+                        class="btn {% if seat.is_available %}btn-success{% else %}btn-secondary{% endif %} w-100"
+                        {% if seat.is_available %}
+                        onclick="bookSeat({{ seat.id }})"
+                        {% else %}
+                        disabled
+                        {% endif %}>
+                    Seat {{ seat.seat_number }}
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const busId = {{ bus.id }};
+    const socket = new WebSocket(
+        `ws://${window.location.host}/ws/seats/${busId}/`
+    );
+
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const seatId = data.seat_id;
+        const isAvailable = data.is_available;
+
+        const seatButton = document.getElementById(`seat-${seatId}`);
+        if (seatButton) {
+            seatButton.className = isAvailable ? 'btn btn-success w-100' : 'btn btn-secondary w-100';
+            seatButton.disabled = !isAvailable;
+        }
+    };
+
+    function bookSeat(seatId) {
+        socket.send(JSON.stringify({
+            'seat_id': seatId,
+            'action': 'book',
+        }));
+    }
+</script>
+{% endblock %}

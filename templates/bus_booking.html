@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<!-- Your existing CSS -->
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Bus Information Header -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3 class="card-title">Route: {{ bus.route.start_point }} to {{ bus.route.end_point }}</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Date:</strong> {{ bus.date|date:"D, M j, Y" }}</p>
+                    <p><strong>Time:</strong> {{ bus.departure_time|time:"h:i A" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Bus Capacity:</strong> {{ bus.capacity }} seats</p>
+                    <p><strong>Fare:</strong> KES {{ bus.route.fare }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Seat Selection Area -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Select Your Seat</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Seat Legend -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-block me-3">
+                            <span class="badge bg-light text-primary border">Available</span>
+                        </div>
+                        <div class="d-inline-block me-3">
+                            <span class="badge bg-danger">Booked</span>
+                        </div>
+                        <div class="d-inline-block">
+                            <span class="badge bg-success">Selected</span>
+                        </div>
+                    </div>
+
+                    <!-- Seat Grid -->
+                    <div class="row row-cols-4 g-3">
+                        {% for seat in seats %}
+                        <div class="col text-center">
+                            <button type="button"
+                                class="btn {% if seat.is_booked %}btn-danger{% else %}btn-outline-primary{% endif %} w-100"
+                                data-seat-id="{{ seat.id }}"
+                                data-seat-number="{{ seat.seat_label }}"
+                                data-seat-price="{{ bus.route.fare }}"
+                                {% if seat.is_booked %}disabled{% endif %}>
+                                {{ seat.seat_label }}
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Booking Details</h5>
+                </div>
+                <div class="card-body">
+                    <form id="bookingForm" method="POST" action="{% url 'bus_booking' bus.id %}">
+                        {% csrf_token %}
+                        {{ form.seat_id }}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Selected Seat</label>
+                            <input type="text" class="form-control" id="selected_seat_display" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Amount (KES)</label>
+                            <input type="text" class="form-control" id="amount_display" value="{{ bus.route.fare }}" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">M-Pesa Phone Number</label>
+                            {{ form.phone_number }}
+                            <div class="form-text">Format: 254XXXXXXXXX</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="submitButton">
+                            Book and Pay Now
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Display Messages -->
+{% if messages %}
+<div class="mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Add this modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Payment Processing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Please complete the payment on your phone...</p>
+                    <p class="text-muted small">Do not close this window until payment is confirmed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const seatButtons = document.querySelectorAll('[data-seat-id]');
+    const selectedSeatId = document.getElementById('id_seat_id');
+    const selectedSeatDisplay = document.getElementById('selected_seat_display');
+    const submitButton = document.getElementById('submitButton');
+    let currentSelectedSeat = null;
+
+    // Initially disable submit button
+    submitButton.disabled = true;
+
+    seatButtons.forEach(button => {
+        if (!button.disabled) {
+            button.addEventListener('click', function() {
+                // Handle seat selection
+                if (currentSelectedSeat === this) {
+                    // Deselect
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-primary');
+                    currentSelectedSeat = null;
+                    selectedSeatId.value = '';
+                    selectedSeatDisplay.value = '';
+                    submitButton.disabled = true;
+                } else {
+                    // Select new seat
+                    if (currentSelectedSeat) {
+                        currentSelectedSeat.classList.remove('btn-success');
+                        currentSelectedSeat.classList.add('btn-outline-primary');
+                    }
+                    this.classList.remove('btn-outline-primary');
+                    this.classList.add('btn-success');
+                    currentSelectedSeat = this;
+                    selectedSeatId.value = this.dataset.seatId;
+                    selectedSeatDisplay.value = `Seat ${this.dataset.seatNumber}`;
+                    submitButton.disabled = false;
+                }
+            });
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const bookingForm = document.getElementById('bookingForm');
+    const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+    
+    bookingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Show payment modal
+        paymentModal.show();
+        
+        // Submit form via AJAX
+        fetch(bookingForm.action, {
+            method: 'POST',
+            body: new FormData(bookingForm),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Redirect to payment status page
+                window.location.href = data.redirect_url;
+            } else {
+                paymentModal.hide();
+                alert(data.message || 'An error occurred. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            paymentModal.hide();
+            alert('An error occurred while processing your request. Please try again.');
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Hero section styles */
+    .hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                    url('{% static "images/nairobi.jpg" %}') no-repeat center center;
+        background-size: cover;
+        color: white;
+        padding: 150px 0;
+        margin-top: -1.5rem;
+        position: relative;
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: linear-gradient(to bottom right, transparent 49%, #fff 50%);
+    }
+
+    .hero h1 {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero p {
+        font-size: 1.4rem;
+        margin-bottom: 2.5rem;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .hero-buttons .btn {
+        padding: 12px 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .hero-buttons .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+    }
+
+    .hero-buttons .btn-primary:hover {
+        background-color: #0b5ed7;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+    }
+
+    .hero-buttons .btn-outline-light:hover {
+        background-color: white;
+        color: #0d6efd;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Features section */
+    .features {
+        padding: 100px 0;
+        background-color: #ffffff;
+    }
+
+    .section-title {
+        position: relative;
+        margin-bottom: 60px;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 3px;
+        background-color: #0d6efd;
+    }
+
+    .feature-box {
+        text-align: center;
+        padding: 40px 25px;
+        border-radius: 15px;
+        background: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        height: 100%;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .feature-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #0d6efd;
+        background: rgba(13, 110, 253, 0.1);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .feature-box:hover .feature-icon {
+        background: #0d6efd;
+        color: white;
+        transform: rotateY(360deg);
+    }
+
+    .feature-box h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+
+    .feature-box p {
+        color: #6c757d;
+        line-height: 1.6;
+    }
+
+    /* Call to action section */
+    .cta {
+        background: linear-gradient(135deg, #0d6efd 0%, #0099ff 100%);
+        color: white;
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: linear-gradient(to bottom right, #fff 49%, transparent 50%);
+    }
+
+    .cta h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .cta .btn-outline-light {
+        border-width: 2px;
+        padding: 12px 35px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .cta .btn-outline-light:hover {
+        background-color: white;
+        color: #0d6efd;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Stats Section */
+    .stats {
+        padding: 80px 0;
+        background-color: #f8f9fa;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #0d6efd;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .hero {
+            padding: 100px 0;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+        }
+
+        .feature-box {
+            margin-bottom: 30px;
+        }
+
+        .cta {
+            padding: 60px 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero text-center">
+    <div class="container">
+        <h1 class="animate__animated animate__fadeInDown">Welcome to Nairobi Transportation</h1>
+        <p class="lead animate__animated animate__fadeInUp">Your trusted partner for safe and comfortable travel across Nairobi</p>
+        <div class="hero-buttons">
+            {% if not user.is_authenticated %}
+                <div class="d-flex justify-content-center gap-4">
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg animate__animated animate__fadeInLeft">Get Started</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg animate__animated animate__fadeInRight">Login</a>
+                </div>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg animate__animated animate__fadeInUp">View Available Routes</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Daily Routes</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">Happy Customers</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Modern Buses</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Customer Support</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+    <div class="container">
+        <h2 class="text-center section-title">Why Choose Us</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3>Safe Travel</h3>
+                    <p>Professional drivers and well-maintained vehicles ensure your safety throughout the journey.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <h3>Punctual Service</h3>
+                    <p>Reliable schedules and timely departures to help you reach your destination on time.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="bi bi-cash-coin"></i>
+                    </div>
+                    <h3>Easy Payment</h3>
+                    <p>Convenient M-Pesa payment options for hassle-free booking experience.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta text-center">
+    <div class="container">
+        <h2 class="animate__animated animate__fadeInDown">Ready to Travel?</h2>
+        <p class="lead mb-4 animate__animated animate__fadeInUp">Book your seat now and experience comfortable travel across Nairobi.</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-lg animate__animated animate__fadeInUp">Book Now</a>
+        {% else %}
+            <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg animate__animated animate__fadeInUp">Join Us Today</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add animations when elements come into view
+    document.addEventListener('DOMContentLoaded', function() {
+        const animateOnScroll = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate__animated', entry.target.dataset.animation);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(animateOnScroll, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('[data-animation]').forEach(element => {
+            observer.observe(element);
+        });
+    });
+</script>
+{% endblock %}
